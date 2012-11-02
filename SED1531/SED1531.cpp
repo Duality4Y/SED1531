@@ -2,7 +2,7 @@
 #include "Arduino.h"
 
 byte lcdFonts[][5] = {
-{ 0x00 , 0x00 , 0x00 , 0x00 , 0x00 }, 		
+{ 0x00 , 0x00 , 0x00 , 0x00 , 0x00 }, 
 { 0x00 , 0x00 , 0x5F , 0x00 , 0x00 }, 
 { 0x00 , 0x07 , 0x00 , 0x07 , 0x00 }, 
 { 0x14 , 0x7F , 0x14 , 0x7F , 0x14 }, 
@@ -103,7 +103,9 @@ byte lcdFonts[][5] = {
 int lcdA0 = 12;
 int lcdRW = 11;
 int lcdEnable = 10;
-int lcdDataPins[] = {9,8,7,6,5,4,3,2};	
+int lcdDataPins[] = {9,8,7,6,5,4,3,2};
+int currentLine = 0;
+int charNum = 0;
 
 void SED1531::begin(){
 	pinMode(lcdA0, OUTPUT);
@@ -115,7 +117,7 @@ void SED1531::begin(){
 	}
 	delay(2000);
 	writecommand(0xe2);
-	delay(1000);
+	/*used to be a delay here not needed.*/
 	writecommand(0xa1);
 	writecommand(0xa2);
 	writecommand(0x2c);
@@ -132,8 +134,12 @@ void SED1531::setContrast(byte contrast){
 	writecommand(0x80+contrast);
 }
 
+void SED1531::inverse(byte reverse){
+	writecommand(0xA6+reverse);
+	}
+
 void SED1531::setCursor(byte row){
-	byte page = 0xb0+(row -1);
+	byte page = 0xb0+(row);
 	writecommand(page);
 	writecommand(0x08);
 	writecommand(0x00);
@@ -162,13 +168,51 @@ void SED1531::writecommand(byte cmd){
 }
 
 inline size_t SED1531::write(byte lcdData){
+	digitalWrite(lcdRW, LOW);
+	digitalWrite(lcdA0, HIGH);
+	
+	if(lcdData == '\n'|| charNum==19){
+		charNum = 0;
+		currentLine++;
+		if(currentLine==6){
+			currentLine = 0;
+			setCursor(currentLine);
+			}
+		else{
+			setCursor(currentLine);
+			}
+		}
+	else if(isprint(lcdData)){
+		charNum++;
+		Serial.print("currentLine number: ");
+		Serial.println(currentLine);
+		byte character = lcdData - 32;
+		for(int col = 0;col<5;col++){
+			byte data = lcdFonts[character][col];
+			for(int bit = 7;bit>=0;bit--){
+				byte value = data & 0x01;
+				digitalWrite(lcdDataPins[bit], value);
+				data = data >> 1;
+				Serial.print(data);
+				}
+				Serial.println(" ");
+			digitalWrite(lcdEnable, HIGH);
+			delayMicroseconds(10);
+			digitalWrite(lcdEnable, LOW);
+			delayMicroseconds(10);
+			digitalWrite(lcdEnable, HIGH);
+			}
+		}
+	}
+
+void SED1531::writePixData(byte lcdData){
 	  digitalWrite(lcdRW, LOW);
 	  digitalWrite(lcdA0, HIGH);
 
 	  byte data = lcdData;
 	  
 	  for (int i = 7; i >= 0 ; i--) {
-	    int value = data & 0x1;
+	    int value = data & 0x01;
 	    digitalWrite(lcdDataPins[i], value);
 	    data = data >> 1;
 	  }
