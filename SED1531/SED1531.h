@@ -12,6 +12,7 @@ class SED1531 : public Print{
 		void writecommand(byte);
 		void writePixData(byte);
 		void inverse(byte);
+		void setMarker(byte,boolean);
 		virtual size_t write(byte);
 	//private:
 };

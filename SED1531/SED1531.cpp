@@ -128,14 +128,47 @@ void SED1531::begin(){
 	writecommand(0xa4);
 	writecommand(0xaf);
 	writecommand(0x40);
-}
+	}
 
 void SED1531::setContrast(byte contrast){
 	writecommand(0x80+contrast);
-}
+	}
 
 void SED1531::inverse(byte reverse){
 	writecommand(0xA6+reverse);
+	}
+
+void SED1531::setMarker(byte marker, boolean on){
+	byte highNibble, lowNibble;
+	byte markerLCD;
+	switch(marker){
+		case 1:
+			markerLCD = 20;
+			break;
+		case 2:
+			markerLCD = 31;
+			break;
+		case 3:
+			markerLCD = 32;
+			break;
+		case 4:
+			markerLCD = 57;
+			break;
+		case 5:
+			markerLCD = 69;
+			break;
+		case 6:
+			markerLCD = 78;
+			break;
+		}
+	lowNibble = markerLCD&0xf;
+	highNibble = markerLCD;
+	highNibble = highNibble >> 4;
+	bitSet(highNibble, 4);
+	writecommand(0xb6);
+	writecommand(highNibble);
+	writecommand(lowNibble);
+	writePixData(on);
 	}
 
 void SED1531::setCursor(byte row){
@@ -146,26 +179,26 @@ void SED1531::setCursor(byte row){
 	writecommand(page);
 	writecommand(0x08);
 	writecommand(0x00);
-}
+	}
 
 void SED1531::writecommand(byte cmd){
-	  digitalWrite(lcdRW, LOW);
-	  digitalWrite(lcdA0, LOW);
-	  
-	  byte data = cmd;
-	  
-	  for (int i = 7; i >= 0; i--) {
-	    int value = data & 0x1;
-	    digitalWrite(lcdDataPins[i], value);
-	    data = data >> 1;
-	  }
+	digitalWrite(lcdRW, LOW);
+	digitalWrite(lcdA0, LOW);
+	
+	byte data = cmd;
+	
+	for (int i = 7; i >= 0; i--) {
+		int value = data & 0x1;
+		digitalWrite(lcdDataPins[i], value);
+		data = data >> 1;
+	}
 
-	  digitalWrite(lcdEnable, HIGH);
-	  delayMicroseconds(10);
-	  digitalWrite(lcdEnable, LOW);
-	  delayMicroseconds(10);
-	  digitalWrite(lcdEnable, HIGH);
-}
+	digitalWrite(lcdEnable, HIGH);
+	delayMicroseconds(10);
+	digitalWrite(lcdEnable, LOW);
+	delayMicroseconds(10);
+	digitalWrite(lcdEnable, HIGH);
+	}
 
 inline size_t SED1531::write(byte lcdData){
 	digitalWrite(lcdRW, LOW);
@@ -206,23 +239,23 @@ inline size_t SED1531::write(byte lcdData){
 	}
 
 void SED1531::writePixData(byte lcdData){
-	  digitalWrite(lcdRW, LOW);
-	  digitalWrite(lcdA0, HIGH);
-
-	  byte data = lcdData;
-	  
-	  for (int i = 7; i >= 0 ; i--) {
-	    int value = data & 0x01;
-	    digitalWrite(lcdDataPins[i], value);
-	    data = data >> 1;
-	  }
-	  
-	  digitalWrite(lcdEnable, HIGH);
-	  delayMicroseconds(10);
-	  digitalWrite(lcdEnable, LOW);
-	  delayMicroseconds(10);
-	  digitalWrite(lcdEnable, HIGH);
-}
+	digitalWrite(lcdRW, LOW);
+	digitalWrite(lcdA0, HIGH);
+	
+	byte data = lcdData;
+	
+	for (int i = 7; i >= 0 ; i--) {
+		int value = data & 0x01;
+		digitalWrite(lcdDataPins[i], value);
+		data = data >> 1;
+	}
+	
+	digitalWrite(lcdEnable, HIGH);
+	delayMicroseconds(10);
+	digitalWrite(lcdEnable, LOW);
+	delayMicroseconds(10);
+	digitalWrite(lcdEnable, HIGH);
+	}
 
 
 
