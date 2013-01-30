@@ -217,8 +217,8 @@ inline size_t SED1531::write(byte lcdData){
 		}
 	else if(isprint(lcdData)){
 		charNum++;
-		Serial.print("currentLine number: ");
-		Serial.println(currentLine);
+		//Serial.print("currentLine number: ");
+		//Serial.println(currentLine);
 		byte character = lcdData - 32;
 		for(int col = 0;col<5;col++){
 			byte data = lcdFonts[character][col];
@@ -226,9 +226,9 @@ inline size_t SED1531::write(byte lcdData){
 				byte value = data & 0x01;
 				digitalWrite(lcdDataPins[bit], value);
 				data = data >> 1;
-				Serial.print(data);
+				//Serial.print(data);
 				}
-				Serial.println(" ");
+				//Serial.println(" ");
 			digitalWrite(lcdEnable, HIGH);
 			delayMicroseconds(10);
 			digitalWrite(lcdEnable, LOW);
