@@ -1,3 +1,11 @@
+/* 
+ * ---- 30/1/2013
+ * 		modified begin();
+ * 		to be more true to the original sketch this is  based on.
+ * 		http://tkkrlab.nl/wiki/Glcd_48x100
+ * 		0xe2 does not reset the display don't know why.
+ * */
+
 #include <SED1531.h>
 #include "Arduino.h"
 
@@ -111,23 +119,22 @@ void SED1531::begin(){
 	pinMode(lcdA0, OUTPUT);
 	pinMode(lcdRW, OUTPUT);
 	pinMode(lcdEnable, OUTPUT);
-	
 	for(int i=0;i<=7;i++){
 		pinMode(lcdDataPins[i], OUTPUT);
-	}
-	delay(2000);
-	writecommand(0xe2);
-	/*used to be a delay here not needed.*/
-	writecommand(0xa1);
-	writecommand(0xa2);
-	writecommand(0x2c);
-	writecommand(0x2e);
-	writecommand(0x2f);
-	writecommand(0xa6);
-	writecommand(0x8f);
-	writecommand(0xa4);
-	writecommand(0xaf);
-	writecommand(0x40);
+		}
+	//the following actions are performed to init the lcd
+	writecommand(0xe2);                                //reset display by soft
+	delay(1000);
+	writecommand(0xa1);                                //ADC select
+	writecommand(0xa2);                                //lcd bias 1/8
+	writecommand(0x2c);                                //power
+	writecommand(0x2e);                                //power
+	writecommand(0x2f);                                //power
+	writecommand(0xa6);                                //normal / reverse
+	writecommand(0x8f);                                //set electronic control
+	writecommand(0xa4);                                //display off
+	writecommand(0xaf);                                //display on
+	writecommand(0x40); 
 	}
 
 void SED1531::setContrast(byte contrast){
