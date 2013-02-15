@@ -4,13 +4,6 @@
  * 		to be more true to the original sketch this is  based on.
  * 		http://tkkrlab.nl/wiki/Glcd_48x100
  * 		0xe2 does not reset the display don't know why.
- * 
- * ---- 15/2/2013
- * 		fixed an issue related to setCursor();
- * 		which caused text to appear to roll accross the screen
- * 		note:
- * 		lines longer then 20 chars will display text on display
- * 		on lines it isn't supposed to go.
  * */
 
 #include <SED1531.h>
@@ -120,7 +113,6 @@ int lcdA0 = 12;
 int lcdRW = 11;
 int lcdEnable = 10;
 int lcdDataPins[] = {9,8,7,6,5,4,3,2};
-
 int currentLine = 0;
 int charNum = 0;
 
@@ -189,6 +181,9 @@ void SED1531::setMarker(byte marker, boolean on){
 
 void SED1531::setCursor(byte row){
 	byte page = 0xb0+(row);
+	writecommand(page);
+	writecommand(0x08);
+	writecommand(0x00);
 	writecommand(page);
 	writecommand(0x08);
 	writecommand(0x00);
@@ -270,6 +265,73 @@ void SED1531::writePixData(byte lcdData){
 	digitalWrite(lcdEnable, HIGH);
 	}
 
+void SED1531::rect(uint8_t startX, uint8_t startY, uint8_t width, uint8_t height, uint8_t color){
+	/*
+	 * The display (in terms of characters) is 6 characters high and 20 wide.
+	 * the screen is 100x48 
+	 * drawing pixels to the screen is easy but the byte's are oriented like:
+	 * ||||
+	 * ||||
+	 * | = a row of bits 8 high.
+	 * 
+	 * we should figure out in what byte to start with startX and startY
+	 * */
+	 /*first figure out what row to start*/
+	 int screenWidth = 100;
+	 int screenHeight = 48;
+	 
+	 int row = screenHeight/startY;
+	 Serial.print("row>> ");
+	 Serial.println(row);
+	 int bit = (screenHeight/startY)%8;
+	 Serial.print("bit>> ");
+	 Serial.println(bit);
+	 setCursor(row);
+	 writePixData(0x06);
+	}
+
+
+//void SED1531::rect(uint8_t left,uint8_t top, uint8_t width, uint8_t height, uint8_t color){
+	//uint8_t x;
+	//uint8_t mask;
+	//uint8_t data = 0x00;
+	//uint8_t page = top/8;
+	//uint8_t bit = 1 << (top%8);
+	//while(height != 0){
+		//data |= bit;
+		//--height;
+		//bit <<= 1;
+		//if(bit == 0 || height == 0){
+			///*0x02 has to do with lcd color (inverted ?).*/
+			//mask = color != 0x02 ? ~data : 0xFF;
+			///*0x00 has to do with clear lcd color*/
+			//if(color == 0x00){
+				//data = 0;
+				//}
+			
+			///*setCursor(y,x); have to build the function
+			 //* I think all the function does is put the
+			 //* cursor in the right place, and at the right byte.
+			 //*/
+			
+			//if(mask == 0x00){
+				///*write data*/
+				//}
+			//else{
+				//for(x=0;x<width;++x){
+					///*not sure says glcd update data in glcd.h*/
+					///* it probably involves reading data.*/
+					//}
+				//}
+			///*says glcd_page_update_end(); i think it ends the updating process
+			 //* which i don't understand yet.
+			 //* */
+			//++page;
+			//data = 0x00;
+			//bit = 0x01;
+			//}
+		//}
+	//}
 
 
 
