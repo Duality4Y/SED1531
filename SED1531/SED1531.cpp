@@ -16,6 +16,8 @@
  *              which caused text to appear on the same collumn as the marker
  *              For this to work you have to call the routine resetCursor()
  * 	        after the setMarker() routine
+ *      	added code to reset the display on init, without it the display
+ *   		doesn't work reliable
  * */
 
 #include <SED1531.h>
