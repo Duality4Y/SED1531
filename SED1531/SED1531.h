@@ -7,7 +7,7 @@
 class SED1531 : public Print{
 	public:
 		void setCursor(byte row);
-		void begin();
+		void init();
 		void setContrast(byte);
 		void writecommand(byte);
 		void writePixData(byte);
