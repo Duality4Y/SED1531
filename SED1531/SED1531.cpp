@@ -11,6 +11,11 @@
  * 		note:
  * 		lines longer then 20 chars will display text on display
  * 		on lines it isn't supposed to go.
+ * ---- 17/2/2013
+ *              fixed an issue related to setMarker();
+ *              which caused text to appear on the same collumn as the marker
+ *              For this to work you have to call the routine resetCursor()
+ * 	        after the setMarker() routine
  * */
 
 #include <SED1531.h>
@@ -269,6 +274,15 @@ void SED1531::writePixData(byte lcdData){
 	delayMicroseconds(10);
 	digitalWrite(lcdEnable, HIGH);
 	}
+
+
+	
+void SED1531::resetCursor() {
+        writecommand(0xEE);
+        writecommand(0x10);
+        writecommand(0x00);
+        }
+
 
 
 
