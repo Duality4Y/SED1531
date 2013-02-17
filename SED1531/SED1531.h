@@ -15,6 +15,7 @@ class SED1531 : public Print{
 		void setMarker(byte,boolean);
 		virtual size_t write(byte);
 		void rect(uint8_t,uint8_t,uint8_t,uint8_t,uint8_t);
+		void resetCursor();
 	//private:
 };
 #endif
