@@ -124,6 +124,7 @@ byte lcdFonts[][5] = {
 int lcdA0 = 12;
 int lcdRW = 11;
 int lcdEnable = 10;
+int displayPower = 12;
 int lcdDataPins[] = {9,8,7,6,5,4,3,2};
 
 int currentLine = 0;
@@ -136,6 +137,11 @@ void SED1531::begin(){
 	for(int i=0;i<=7;i++){
 		pinMode(lcdDataPins[i], OUTPUT);
 		}
+	//the following action causes the display to reset 
+	digitalWrite(displayPower, LOW);
+	delay(2000);
+	digitalWrite(displayPower, HIGH);
+   	delay(3000);
 	//the following actions are performed to init the lcd
 	writecommand(0xe2);                                //reset display by soft
 	delay(1000);
@@ -148,7 +154,7 @@ void SED1531::begin(){
 	writecommand(0x8f);                                //set electronic control
 	writecommand(0xa4);                                //display off
 	writecommand(0xaf);                                //display on
-	writecommand(0x40); 
+	writecommand(0x40); 				   //sel dram line 1 for com1
 	}
 
 void SED1531::setContrast(byte contrast){
@@ -164,22 +170,22 @@ void SED1531::setMarker(byte marker, boolean on){
 	byte markerLCD;
 	switch(marker){
 		case 1:
-			markerLCD = 20;
+			markerLCD = 20;			// arrows on the left
 			break;
 		case 2:
-			markerLCD = 31;
+			markerLCD = 31;			// 2 hor. dashes
 			break;
 		case 3:
-			markerLCD = 32;
+			markerLCD = 32;			// barcode
 			break;
 		case 4:
-			markerLCD = 57;
+			markerLCD = 57;			// battery low
 			break;
 		case 5:
-			markerLCD = 69;
+			markerLCD = 69;			// ?
 			break;
 		case 6:
-			markerLCD = 78;
+			markerLCD = 78;			// arrow up
 			break;
 		}
 	lowNibble = markerLCD&0xf;
