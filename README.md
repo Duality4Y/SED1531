@@ -27,3 +27,16 @@ Data
 Documentation:
 
 http://tkkrlab.nl/wiki/Glcd_48x100
+
+=======
+this library is useable but I have written a better one:
+
+https://github.com/Duality4Y/DmDisplay
+
+DmDisplay is for the SED1531,
+
+It can do graphical things like drawing circles rects lines and individual pixels.
+
+but It can also just write text.
+
+mainly 5x7 Font.
