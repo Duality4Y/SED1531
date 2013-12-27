@@ -19,7 +19,7 @@ Pin   LCD
 
 6     Enable Digital
  
-Data
+Data Lines:
 
 7    DB 7 MSB
 
