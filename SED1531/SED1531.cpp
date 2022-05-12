@@ -131,7 +131,7 @@ inline size_t SED1531::write(byte lcdData){
 	digitalWrite(lcdRW, LOW);
 	digitalWrite(lcdA0, HIGH);
 	
-	if(lcdData == '\n'|| charNum==19){
+	if(lcdData == '\n'|| charNum==17){
 		charNum = 0;
 		currentLine++;
 		if(currentLine==6){
@@ -145,8 +145,8 @@ inline size_t SED1531::write(byte lcdData){
 	else if(isprint(lcdData)){
 		charNum++;
 		byte character = lcdData - 32;
-		for(int col = 0;col<5;col++){
-			byte data = lcdFonts[character][col];
+		for(int col = 0;col<6;col++){
+			byte data = col<5?pgm_read_byte(&lcdFonts[character][col]):0;
 			for(int bit = 7;bit>=0;bit--){
 				byte value = data & 0x01;
 				digitalWrite(lcdDataPins[bit], value);
